@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Gruppi Organizer Pro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #007bff;
+      --secondary-color: #6c757d;
+      --success-color: #28a745;
+      --danger-color: #dc3545;
+      --danger-color-hover: #c82333;
+      --light-color: #f8f9fa;
+      --dark-color: #343a40;
+      --background-color: #f4f7f6;
+      --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      --border-radius: 8px;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: var(--background-color);
+      color: var(--dark-color);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+    }
+    
+    .container {
+        max-width: 800px;
+        width: 100%;
+    }
+
+    h1, h2, h3 {
+      text-align: center;
+      color: var(--primary-color);
+    }
+    h1 { font-size: 2.5em; }
+    h2 { font-size: 1.8em; border-bottom: 2px solid var(--primary-color); padding-bottom: 10px; margin-bottom: 20px;}
+
+    .hidden { display: none; }
+
+    .page {
+      background-color: #fff;
+      padding: 25px 35px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--card-shadow);
+      margin-top: 20px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      margin: 8px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-family: 'Poppins', sans-serif;
+      box-sizing: border-box; 
+    }
+    
+    button {
+      background-color: var(--primary-color);
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: 600;
+      margin-top: 10px;
+      transition: background-color 0.3s ease;
+      width: 100%; /* Default a larghezza piena per mobile-first approach */
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    button.secondary {
+        background-color: var(--secondary-color);
+    }
+    button.secondary:hover {
+        background-color: #5a6268;
+    }
+    button.danger {
+        background-color: var(--danger-color);
+    }
+    button.danger:hover {
+        background-color: var(--danger-color-hover);
+    }
+    button.small {
+        padding: 6px 12px;
+        font-size: 14px;
+        margin-top: 0;
+        width: auto;
+    }
+    
+    .button-group {
+        display: flex;
+        flex-direction: column; /* Impilati di default */
+        gap: 10px;
+        justify-content: center;
+        margin-top: 15px;
+    }
+
+    table {
+      display: block; /* Permette lo scroll orizzontale su tabelle grandi */
+      overflow-x: auto;
+      white-space: nowrap;
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      box-shadow: var(--card-shadow);
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: center;
+      vertical-align: middle;
+    }
+    th {
+      background-color: var(--primary-color);
+      color: white;
+      font-weight: 600;
+    }
+    tr:nth-child(even) { background-color: var(--light-color); }
+    
+    label { font-weight: 600; display: block; margin-top: 10px;}
+    
+    .config-row {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        background: #f9f9f9;
+        padding: 15px;
+        border-radius: 5px;
+        margin-bottom: 10px;
+        border: 1px solid #eee;
+    }
+    .config-row > div { flex: 1; }
+    .config-row > input { flex: 1; margin: 0; }
+    .config-row > button { flex-shrink: 0; }
+    
+    #userSlots div { padding: 5px; }
+    #userSlots label {
+        display: flex;
+        align-items: center;
+        font-weight: normal;
+    }
+    #userSlots input[type="checkbox"] {
+        width: auto;
+        margin-right: 10px;
+        height: 20px;
+        width: 20px;
+    }
+
+    /* --- REGOLE PER SCHERMI PIÙ GRANDI (DESKTOP) --- */
+    @media (min-width: 768px) {
+        body { padding: 40px; }
+        
+        .button-group { flex-direction: row; }
+        
+        button { width: auto; }
+
+        .config-row {
+            flex-direction: row;
+            align-items: flex-end;
+        }
+
+        .page { padding: 35px 50px; }
+    }
+    
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Gruppi Organizer Pro</h1>
+
+  <div id="loginPage" class="page">
+    <h2>Entra</h2>
+    <label for="userName">Nome:</label>
+    <input type="text" id="userName">
+    <label for="userRole">Ruolo:</label>
+    <select id="userRole">
+      <option value="user">Utente</option>
+      <option value="admin">Amministratore</option>
+    </select>
+    <div class="button-group">
+        <button onclick="enterApp()">Entra</button>
+    </div>
+  </div>
+  
+  <div id="adminDashboardPage" class="page hidden">
+    <h2>Cruscotto Amministratore</h2>
+    <div class="button-group">
+        <button onclick="showNewEventForm()">+ Nuovo Evento</button>
+    </div>
+    <hr style="margin: 20px 0;">
+    <h3>Gestisci Evento Esistente</h3>
+    <select id="savedEvents" onchange="handleEventSelection(this.value)">
+      <option value="">-- Seleziona un Evento --</option>
+    </select>
+    <div id="eventActions" class="hidden button-group">
+        <button onclick="showEditPage()">Modifica Parametri</button>
+        <button class="secondary" onclick="showReportForSelectedEvent()">Visualizza Report</button>
+    </div>
+  </div>
+
+  <div id="adminConfigPage" class="page hidden">
+    <h2 id="configTitle">Crea Nuovo Evento</h2>
+    <label for="eventName">Nome evento:</label>
+    <input type="text" id="eventName">
+    <h3>Reparti</h3>
+    <div id="departmentsContainer"></div>
+    <button onclick="addDepartment()">+ Aggiungi Reparto</button>
+    <h3>Slot</h3>
+    <div id="slotsContainer"></div>
+    <button onclick="addSlot()">+ Aggiungi Slot</button>
+    <div class="button-group">
+        <button onclick="saveConfig()">Salva Configurazione</button>
+        <button class="secondary" onclick="goBackToAdminDashboard()">Annulla</button>
+    </div>
+  </div>
+
+  <div id="userPage" class="page hidden">
+    <h2 id="eventTitle">Iscrizione Evento</h2>
+    <label for="userEvent">Seleziona Evento:</label>
+    <select id="userEvent" onchange="selectEventForUser()"></select>
+    <label for="userDepartment">Seleziona Reparto:</label>
+    <select id="userDepartment" onchange="resetUserState()"></select>
+    <h3>Seleziona i tuoi Slot</h3>
+    <div id="userSlots"></div>
+    <div class="button-group">
+        <button onclick="submitUserData()">Invia Iscrizione</button>
+    </div>
+    <div id="userMessage" style="margin-top:15px; white-space: pre-wrap; font-weight: bold;"></div>
+  </div>
+
+  <div id="adminReportPage" class="page hidden">
+    <h2 id="reportTitle">Report Iscrizioni</h2>
+    <table id="reportTable"></table>
+    <div class="button-group">
+        <button onclick="downloadCSV()">Scarica CSV</button>
+        <button class="secondary" onclick="goBackToAdminDashboard()">Torna al Cruscotto</button>
+    </div>
+  </div>
+</div>
+  <script>
+    let currentUser = {};
+    let config = {};
+    let allEvents = {}; // Contiene la configurazione di tutti gli eventi
+    let registrations = []; // Contiene tutte le iscrizioni
+
+    const ALL_PAGES = ['loginPage', 'adminDashboardPage', 'adminConfigPage', 'userPage', 'adminReportPage'];
+
+    function showPage(pageId) {
+        ALL_PAGES.forEach(id => document.getElementById(id).classList.add('hidden'));
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    async function enterApp() {
+        const name = document.getElementById('userName').value.trim();
+        const role = document.getElementById('userRole').value;
+        if (!name) { alert("Inserisci il nome"); return; }
+        currentUser = { name, role };
+
+        if (role === "admin") {
+            goBackToAdminDashboard();
+        } else {
+            loadConfigForUser();
+        }
+    }
+
+    function goBackToAdminDashboard() {
+        populateSavedEvents();
+        document.getElementById('eventActions').classList.add('hidden');
+        showPage('adminDashboardPage');
+    }
+
+    function showNewEventForm() {
+        config = { eventName: "", departments: [], slots: [] };
+        document.getElementById('configTitle').innerText = "Crea Nuovo Evento";
+        document.getElementById('eventName').value = "";
+        document.getElementById('eventName').disabled = false;
+        renderDepartments();
+        renderSlots();
+        showPage('adminConfigPage');
+    }
+
+    function handleEventSelection(evName) {
+        const actionsDiv = document.getElementById('eventActions');
+        if (!evName) {
+            actionsDiv.classList.add('hidden');
+            return;
+        }
+        config = allEvents[evName];
+        actionsDiv.classList.remove('hidden');
+    }
+
+    function showEditPage() {
+        document.getElementById('configTitle').innerText = `Modifica Evento: ${config.eventName}`;
+        document.getElementById('eventName').value = config.eventName;
+        document.getElementById('eventName').disabled = true;
+        renderDepartments();
+        renderSlots();
+        showPage('adminConfigPage');
+    }
+    
+    // --- Funzioni di rendering (con eliminazione) ---
+    function addDepartment(){ config.departments.push({ name: "", capacity: 1 }); renderDepartments(); }
+    function renderDepartments(){
+      const c = document.getElementById('departmentsContainer');
+      c.innerHTML="";
+      config.departments.forEach((d,i)=>{
+        c.innerHTML += `<div class="config-row">
+          <div><label>Nome Reparto:</label><input value="${d.name || ''}" onchange="config.departments[${i}].name=this.value"></div>
+          <div><label>Capacità:</label><input type='number' min='1' value="${d.capacity}" onchange="config.departments[${i}].capacity=parseInt(this.value)"></div>
+          <button class="danger small" onclick="deleteDepartment(${i})">Elimina</button>
+        </div>`;
+      });
+    }
+    function deleteDepartment(index) { if (confirm('Sei sicuro?')) { config.departments.splice(index, 1); renderDepartments(); } }
+    function addSlot(){ config.slots.push(""); renderSlots(); }
+    function renderSlots(){
+      const c = document.getElementById('slotsContainer');
+      c.innerHTML="";
+      config.slots.forEach((s,i)=>{
+        c.innerHTML += `<div class="config-row">
+          <label>Nome Slot:</label> <input value="${s || ''}" onchange="config.slots[${i}]=this.value">
+          <button class="danger small" onclick="deleteSlot(${i})">Elimina</button>
+        </div>`;
+      });
+    }
+    function deleteSlot(index) { if (confirm('Sei sicuro?')) { config.slots.splice(index, 1); renderSlots(); } }
+    
+    // --- NUOVA FUNZIONE ASINCRONA ---
+    async function saveConfig() {
+        const isEditing = document.getElementById('eventName').disabled;
+        if (!isEditing) {
+            config.eventName = document.getElementById('eventName').value.trim();
+        }
+        if (!config.eventName) { alert("Inserisci un nome per l'evento"); return; }
+        if (!isEditing && allEvents[config.eventName]) {
+            alert("Esiste già un evento con questo nome.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/.netlify/functions/save-event', {
+                method: 'POST',
+                body: JSON.stringify(config)
+            });
+            if (!response.ok) throw new Error('Errore nel salvataggio');
+            
+            allEvents[config.eventName] = config; // Aggiorna i dati locali
+            alert("Configurazione salvata con successo!");
+            goBackToAdminDashboard();
+
+        } catch (error) {
+            alert("Si è verificato un errore: " + error.message);
+        }
+    }
+
+    function populateSavedEvents() {
+        const sel = document.getElementById('savedEvents');
+        sel.innerHTML = '<option value="">-- Seleziona un Evento --</option>';
+        for (const ev in allEvents) {
+            sel.innerHTML += `<option value="${ev}">${ev}</option>`;
+        }
+    }
+
+    function loadConfigForUser() {
+        const userEventSel = document.getElementById('userEvent');
+        userEventSel.innerHTML = '<option value="">-- Seleziona Evento --</option>';
+        for (const ev in allEvents) {
+            userEventSel.innerHTML += `<option value="${ev}">${ev}</option>`;
+        }
+        if (Object.keys(allEvents).length === 0) {
+            document.getElementById('userPage').innerHTML = "<h2>Nessun evento configurato al momento.</h2>"
+        }
+        showPage('userPage');
+        selectEventForUser();
+    }
+    
+    function resetUserState() {
+        document.getElementById('userMessage').innerText = "";
+        const button = document.querySelector('#userPage button');
+        if (button) button.disabled = false;
+    }
+    
+    function selectEventForUser() {
+        const evName = document.getElementById('userEvent').value;
+        resetUserState();
+        if (!evName) {
+            document.getElementById('userDepartment').innerHTML = "";
+            document.getElementById('userSlots').innerHTML = "";
+            return;
+        };
+
+        config = allEvents[evName];
+        document.getElementById('eventTitle').innerText = `Iscrizione: ${config.eventName}`;
+        
+        const dsel = document.getElementById('userDepartment');
+        dsel.innerHTML = "";
+        config.departments.forEach((d, i) => {
+            dsel.innerHTML += `<option value="${i}">${d.name}</option>`;
+        });
+
+        const slotsDiv = document.getElementById('userSlots');
+        slotsDiv.innerHTML = "";
+        config.slots.forEach((s, i) => {
+            slotsDiv.innerHTML += `<div><label><input type='checkbox' value='${s}' id='slot_${i}'> ${s}</label></div>`;
+        });
+    }
+
+    // --- NUOVA FUNZIONE ASINCRONA ---
+    async function submitUserData() {
+        const isAlreadyRegistered = registrations.some(
+            r => r.event_name === config.eventName && r.user_name.toLowerCase() === currentUser.name.toLowerCase()
+        );
+        if (isAlreadyRegistered) {
+            document.getElementById('userMessage').innerText = "🔴 Risulti già registrato per questo evento.";
+            document.querySelector('#userPage button').disabled = true;
+            return;
+        }
+
+        const depIndex = parseInt(document.getElementById('userDepartment').value);
+        const dept = config.departments[depIndex];
+        const chosenSlots = [];
+        config.slots.forEach((s, i) => {
+            if (document.getElementById('slot_' + i).checked) chosenSlots.push(s);
+        });
+        if (chosenSlots.length === 0) { alert("Seleziona almeno uno slot"); return; }
+        
+        let msg = "";
+        let newRegistrations = [];
+        chosenSlots.forEach(slot => {
+            const regCount = registrations.filter(r => r.event_name === config.eventName && r.department === dept.name && r.slot === slot).length;
+            newRegistrations.push({ 
+                user_name: currentUser.name, 
+                department: dept.name, 
+                slot: slot, 
+                event_name: config.eventName 
+            });
+            if (regCount >= dept.capacity) {
+                msg += `🟡 Reparto ${dept.name}, Slot ${slot}: il reparto è già saturo. Iscrizione registrata in sovrannumero.\n`;
+            } else {
+                msg += `✅ Iscritto con successo a ${slot} in ${dept.name}.\n`;
+            }
+        });
+        
+        try {
+            const response = await fetch('/.netlify/functions/add-registration', {
+                method: 'POST',
+                body: JSON.stringify(newRegistrations)
+            });
+            if (!response.ok) throw new Error('Errore nel salvataggio dell\'iscrizione');
+            
+            // Aggiungi le nuove iscrizioni all'array locale per un feedback immediato
+            registrations.push(...newRegistrations);
+            document.getElementById('userMessage').innerText = msg;
+            document.querySelector('#userPage button').disabled = true;
+
+        } catch(error) {
+            alert("Si è verificato un errore: " + error.message);
+        }
+    }
+    
+    function showReportForSelectedEvent() {
+        document.getElementById('reportTitle').innerText = `Report Iscrizioni: ${config.eventName}`;
+        showReport();
+    }
+    
+    function showReport() {
+        showPage('adminReportPage');
+        const tbl = document.getElementById('reportTable');
+        let header = '<tr><th>Reparto</th>';
+        config.slots.forEach(s => {
+            header += `<th>${s} (Saturazione)</th><th>${s} (Iscritti)</th>`;
+        });
+        header += '</tr>';
+        tbl.innerHTML = header;
+
+        config.departments.forEach(dep => {
+            let row = `<tr><td><b>${dep.name}</b></td>`;
+            config.slots.forEach(slot => {
+                const regs = registrations.filter(r => r.event_name === config.eventName && r.department === dep.name && r.slot === slot);
+                const sat = `${regs.length}/${dep.capacity}`;
+                const color = getColor(regs.length, dep.capacity);
+                const names = regs.map(r => r.user_name).join(", ") || "-";
+                
+                row += `<td style="background:${color}; font-weight: bold;">${sat}</td>`;
+                row += `<td style="text-align: left; white-space: normal;">${names}</td>`;
+            });
+            row += '</tr>';
+            tbl.innerHTML += row;
+        });
+    }
+
+    function getColor(value, max){ /* ... (questa funzione rimane uguale) ... */ }
+    function downloadCSV(){ /* ... (questa funzione va adattata per usare user_name invece di name) ... */ }
+
+    // --- NUOVA FUNZIONE DI AVVIO ---
+    window.onload = async function() {
+        try {
+            const response = await fetch('/.netlify/functions/get-data');
+            if (!response.ok) throw new Error('Impossibile caricare i dati');
+            
+            const data = await response.json();
+            allEvents = data.events;
+            registrations = data.registrations;
+
+            // Ora che abbiamo i dati, possiamo mostrare la pagina di login
+            showPage('loginPage');
+        } catch (error) {
+            document.body.innerHTML = `<h1>Errore di connessione</h1><p>Impossibile caricare i dati dell'applicazione. Riprova più tardi.</p><p>${error.message}</p>`;
+        }
+    };
+</script>
+</body>
+</html>
